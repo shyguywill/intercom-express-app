@@ -380,17 +380,18 @@ async function loadImageAsBase64(url) {
   };
 }
 
-// Compare two images using AI
+// Compare two images using Azure OpenAI
 async function compareImagesWithAI(image1, image2, url1, url2) {
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch(`https://${process.env.AZURE_OPENAI_RESOURCE}.openai.azure.com/openai/deployments/${process.env.AZURE_OPENAI_DEPLOYMENT}/chat/completions?api-version=2024-02-15-preview`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "api-key": process.env.AZURE_OPENAI_API_KEY
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
         max_tokens: 100,
+        temperature: 0,
         messages: [
           {
             role: "user",
@@ -400,19 +401,15 @@ async function compareImagesWithAI(image1, image2, url1, url2) {
                 text: "Compare these two images and determine if they are the same image or substantially similar (considering they might be different sizes, formats, or compression levels). Respond with ONLY 'true' if they match or 'false' if they don't match. No other text."
               },
               {
-                type: "image",
-                source: {
-                  type: "base64",
-                  media_type: image1.contentType,
-                  data: image1.base64
+                type: "image_url",
+                image_url: {
+                  url: `data:${image1.contentType};base64,${image1.base64}`
                 }
               },
               {
-                type: "image",
-                source: {
-                  type: "base64",
-                  media_type: image2.contentType,
-                  data: image2.base64
+                type: "image_url",
+                image_url: {
+                  url: `data:${image2.contentType};base64,${image2.base64}`
                 }
               }
             ]
@@ -420,15 +417,15 @@ async function compareImagesWithAI(image1, image2, url1, url2) {
         ]
       })
     });
-
+    
     const data = await response.json();
-    const result = data.content[0].text.trim().toLowerCase();
+    const result = data.choices?.[0]?.message?.content?.trim().toLowerCase();
     
     console.log(`AI comparison result for ${url1} vs ${url2}: ${result}`);
     return result === 'true';
     
   } catch (error) {
-    console.error('AI comparison error:', error);
+    console.error('AI comparison error (Azure):', error);
     return false;
   }
 }

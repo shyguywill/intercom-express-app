@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intercom AI Image Replacer</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .info-box {
+            background: #e1f5fe;
+            border: 1px solid #b3e5fc;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .info-box h3 {
+            margin-top: 0;
+            color: #0277bd;
+        }
+        .feature {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .feature::before {
+            content: "✓";
+            color: #22c55e;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .setup-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .setup-box h3 {
+            margin-top: 0;
+            color: #b45309;
+        }
+        code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ AI Image Replacer</h1>
+        <p class="subtitle">Intercom Canvas App for Smart Image Replacement</p>
+        
+        <div class="info-box">
+            <h3>How it works:</h3>
+            <div class="feature">Analyzes articles using AI to find matching images</div>
+            <div class="feature">Visually compares images regardless of URL differences</div>
+            <div class="feature">Replaces all matching instances automatically</div>
+            <div class="feature">Provides detailed feedback on replacements made</div>
+        </div>
+        
+        <div class="setup-box">
+            <h3>Setup Instructions:</h3>
+            <p><strong>1. Environment Variables:</strong></p>
+            <p>Set <code>INTERCOM_ACCESS_TOKEN</code> with your Intercom API token</p>
+            
+            <p><strong>2. Intercom App Configuration:</strong></p>
+            <p>Configure this app as a Canvas app in your Intercom developer console</p>
+            
+            <p><strong>3. Required Permissions:</strong></p>
+            <p><code>Read articles</code> and <code>Write articles</code></p>
+        </div>
+        
+        <p><strong>Usage:</strong> This app runs as a Canvas component within Intercom. Install it in your workspace and access it from the Intercom inbox.</p>
+    </div>
+</body>
+</html>

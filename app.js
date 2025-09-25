@@ -383,15 +383,22 @@ async function loadImageAsBase64(url) {
 // Compare two images using Azure OpenAI
 async function compareImagesWithAI(image1, image2, url1, url2) {
   try {
-    const response = await fetch(`https://${process.env.AZURE_OPENAI_RESOURCE}.openai.azure.com/openai/deployments/${process.env.AZURE_OPENAI_DEPLOYMENT}/chat/completions?api-version=2024-02-15-preview`, {
+    const endpoint = process.env.AZURE_OPENAI_ENDPOINT; // e.g., "https://research-rag.openai.azure.com/"
+    const deployment = process.env.AZURE_OPENAI_DEPLOYMENT; // e.g., "gpt-4o"
+    const modelName = process.env.AZURE_OPENAI_MODEL_NAME; // e.g., "gpt-4o"
+    const apiKey = process.env.AZURE_OPENAI_API_KEY;
+    const apiVersion = "2024-12-01-preview";
+    
+    const response = await fetch(`${endpoint}openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "api-key": process.env.AZURE_OPENAI_API_KEY
+        "api-key": apiKey
       },
       body: JSON.stringify({
-        max_tokens: 100,
+        max_completion_tokens: 100,
         temperature: 0,
+        model: modelName,
         messages: [
           {
             role: "user",
@@ -418,14 +425,25 @@ async function compareImagesWithAI(image1, image2, url1, url2) {
       })
     });
     
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
     const data = await response.json();
+    
+    if (data?.error) {
+      throw new Error(`OpenAI API error: ${data.error.message}`);
+    }
+    
     const result = data.choices?.[0]?.message?.content?.trim().toLowerCase();
+
+    console.log('result', result)
     
     console.log(`AI comparison result for ${url1} vs ${url2}: ${result}`);
     return result === 'true';
     
   } catch (error) {
-    console.error('AI comparison error (Azure):', error);
+    console.error('AI comparison error (Azure OpenAI):', error);
     return false;
   }
 }

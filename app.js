@@ -389,7 +389,18 @@ async function compareImagesWithAI(image1, image2, url1, url2) {
     const apiKey = process.env.AZURE_OPENAI_API_KEY;
     const apiVersion = "2024-12-01-preview";
     
-    const response = await fetch(`${endpoint}openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`, {
+    // Debug logging
+    console.log('Azure OpenAI Config:', {
+      endpoint: endpoint ? `${endpoint.substring(0, 30)}...` : 'MISSING',
+      deployment: deployment || 'MISSING',
+      modelName: modelName || 'MISSING',
+      apiKey: apiKey ? `${apiKey.substring(0, 10)}...` : 'MISSING'
+    });
+    
+    const url = `${endpoint}openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
+    console.log('Request URL:', url);
+    
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -426,7 +437,13 @@ async function compareImagesWithAI(image1, image2, url1, url2) {
     });
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Azure OpenAI Error Response:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText
+      });
+      throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
     }
     
     const data = await response.json();
@@ -436,8 +453,6 @@ async function compareImagesWithAI(image1, image2, url1, url2) {
     }
     
     const result = data.choices?.[0]?.message?.content?.trim().toLowerCase();
-
-    console.log('result', result)
     
     console.log(`AI comparison result for ${url1} vs ${url2}: ${result}`);
     return result === 'true';

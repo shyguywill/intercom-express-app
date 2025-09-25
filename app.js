@@ -389,16 +389,7 @@ async function compareImagesWithAI(image1, image2, url1, url2) {
     const apiKey = process.env.AZURE_OPENAI_API_KEY;
     const apiVersion = "2024-12-01-preview";
     
-    // Debug logging
-    console.log('Azure OpenAI Config:', {
-      endpoint: endpoint ? `${endpoint.substring(0, 30)}...` : 'MISSING',
-      deployment: deployment || 'MISSING',
-      modelName: modelName || 'MISSING',
-      apiKey: apiKey ? `${apiKey.substring(0, 10)}...` : 'MISSING'
-    });
-    
     const url = `${endpoint}openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`;
-    console.log('Request URL:', url);
     
     const response = await fetch(url, {
       method: "POST",
@@ -408,7 +399,6 @@ async function compareImagesWithAI(image1, image2, url1, url2) {
       },
       body: JSON.stringify({
         max_completion_tokens: 100,
-        temperature: 0,
         model: modelName,
         messages: [
           {
@@ -438,12 +428,7 @@ async function compareImagesWithAI(image1, image2, url1, url2) {
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Azure OpenAI Error Response:', {
-        status: response.status,
-        statusText: response.statusText,
-        body: errorText
-      });
-      throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
     
     const data = await response.json();
